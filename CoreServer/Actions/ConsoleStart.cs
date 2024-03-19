@@ -3,7 +3,6 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using DOL.GS;
-using DOL.GS.PacketHandler;
 using DOLGameServerConsole;
 using log4net;
 
@@ -107,9 +106,6 @@ namespace DOL.DOLServer.Actions
 						case "exit":
 							run = false;
 							break;
-						case "stacktrace":
-							log.Debug(PacketProcessor.GetConnectionThreadpoolStacks());
-							break;
 						case "clear":
 							Console.Clear();
 							break;
@@ -121,7 +117,7 @@ namespace DOL.DOLServer.Actions
 								line = line.Remove(0, 1);
 								line = line.Insert(0, "&");
 							}
-							GameClient client = new GameClient(null);
+							GameClient client = new GameClient(null, null);
 							client.Out = new ConsolePacketLib();
 							try
 							{

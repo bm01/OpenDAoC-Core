@@ -36,7 +36,7 @@ namespace DOL.GS
     /// </summary>
     public class GamePlayer : GameLiving
     {
-        private const int SECONDS_TO_QUIT_ON_LINKDEATH = 60;
+        private const int SECONDS_TO_QUIT_ON_LINKDEATH = 10;
 
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -1139,7 +1139,7 @@ namespace DOL.GS
                 _playerOwner = owner as GamePlayer;
                 LocationAtLinkDeath = new(string.Empty, _playerOwner.CurrentRegionID, _playerOwner.X, _playerOwner.Y, _playerOwner.Z, _playerOwner.Heading);
                 Start(1000);
-                OnTick(this);
+                //OnTick(this);
             }
 
             protected override int OnTick(ECSGameTimer timer)

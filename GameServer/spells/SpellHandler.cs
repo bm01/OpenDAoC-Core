@@ -1271,6 +1271,7 @@ namespace DOL.GS.Spells
 		/// <returns></returns>
 		public virtual int PowerCost(GameLiving target)
 		{
+			return 0;
 			/*
 			// warlock
 			GameSpellEffect effect = SpellHandler.FindEffectOnTarget(m_caster, "Powerless");

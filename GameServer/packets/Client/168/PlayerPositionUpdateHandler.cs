@@ -568,6 +568,7 @@ namespace DOL.GS.PacketHandler.Client.v168
                 }
             }
         }
+
         private static void HandlePacketPre1124(GameClient client, GSPacketIn packet)
         {
             long environmentTick = GameLoop.GameLoopTime;

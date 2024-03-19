@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
@@ -101,6 +102,7 @@ namespace DOL.GS
             static void TickServices()
             {
                 ECS.Debug.Diagnostics.StartPerfCounter(THREAD_NAME);
+                ClientService.BeginTick();
                 NpcService.Tick();
                 AttackService.Tick();
                 CastingService.Tick();
@@ -110,7 +112,7 @@ namespace DOL.GS
                 CraftingService.Tick();
                 TimerService.Tick();
                 ReaperService.Tick();
-                ClientService.Tick();
+                ClientService.EndTick();
                 DailyQuestService.Tick();
                 WeeklyQuestService.Tick();
                 ConquestService.Tick();
@@ -124,6 +126,16 @@ namespace DOL.GS
             static void Sleep(Stopwatch stopwatch)
             {
                 int sleepFor = (int) (TickRate - stopwatch.Elapsed.TotalMilliseconds);
+
+                ticks.RemoveAt(0);
+                ticks.Add(sleepFor);
+                double total = 0;
+                for (int i = 0; i < 20; i++)
+                {
+                    total += ticks[i];
+                }
+                Console.WriteLine($"{total / 20.0}");
+
                 int busyWaitThreshold = _busyWaitThreshold;
 
                 if (sleepFor >= busyWaitThreshold)
@@ -139,6 +151,13 @@ namespace DOL.GS
                         spinWait.SpinOnce(-1);
                 }
             }
+        }
+
+        private static List<int> ticks = new();
+        static GameLoop()
+        {
+            for (int i = 0; i < 20; i++)
+                ticks.Add(0);
         }
 
         private static void UpdateBusyWaitThreshold()

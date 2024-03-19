@@ -101,7 +101,7 @@ namespace DOL.GS.PacketHandler
 				foreach (GamePlayer plr in player.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE))
 				{
 					if (player != plr)
-						plr.Client.PacketProcessor.SendTCP(pak);
+						plr.Client.PacketProcessor.AddPacket(pak);
 				}
 
 				SendTCP(pak);
