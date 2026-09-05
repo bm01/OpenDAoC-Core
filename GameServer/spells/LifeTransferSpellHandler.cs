@@ -123,8 +123,8 @@ namespace DOL.GS.Spells
                 return false;
             }
 
-            MessageToCaster("You heal " + target.GetName(0, false) + " for " + heal + " hit points!", eChatType.CT_Spell);
-            MessageToLiving(target, "You are healed by " + m_caster.GetName(0, false) + " for " + heal + " hit points.", eChatType.CT_Spell);
+            MessageToCaster($"You heal {target.GetName(0, false)} for {heal} hit points!", eChatType.CT_Spell);
+            MessageToLiving(target, $"You are healed by {m_caster.GetName(0, false)} for {heal} hit points.", eChatType.CT_Spell);
 
             if (heal < amount)
                 MessageToCaster(target.GetName(0, true)+" is fully healed.", eChatType.CT_Spell);

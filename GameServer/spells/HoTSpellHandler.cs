@@ -52,20 +52,18 @@ namespace DOL.GS.Spells
 			if (target.IsAlive == false) return;
 
 			base.OnDirectEffect(target);
-			double heal = Spell.Value * CalculateBuffDebuffEffectiveness();
-			
-			if(target.Health < target.MaxHealth)
-            {
-				target.Health += (int)heal;
+			int heal = (int) (Spell.Value * CalculateBuffDebuffEffectiveness());
+			int effectiveHeal = target.ChangeHealth(Caster, eHealthChangeType.Spell, heal);
+
+			if (effectiveHeal > 0)
+			{
 				if (target is NecromancerPet && Caster.Equals(target))
-					MessageToLiving((target as NecromancerPet).Owner, "Your " + target.GetName(0, false) + " is healed for " + heal + " hit points!", eChatType.CT_Spell);
+					MessageToLiving((target as NecromancerPet).Owner, $"Your {target.GetName(0, false)} is healed for {effectiveHeal} hit points!", eChatType.CT_Spell);
 				else
-					MessageToLiving(target, "You are healed by " + m_caster.GetName(0, false) + " for " + heal + " hit points.", eChatType.CT_Spell);
+					MessageToLiving(target, $"You are healed by {m_caster.GetName(0, false)} for {effectiveHeal} hit points.", eChatType.CT_Spell);
 			}
-            else
-            {
+			else
 				MessageToLiving(target, "You are full health.", eChatType.CT_SpellResisted);
-            }
 
 			//"You feel calm and healthy."
 			MessageToLiving(target, Spell.Message1, eChatType.CT_Spell);

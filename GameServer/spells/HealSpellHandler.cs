@@ -176,6 +176,9 @@ namespace DOL.GS.Spells
                 return false;
             }
 
+            // The unclamped healed amount is shown to the caster because otherwise it can be inferior to the critical amount.
+            // I don't know how Live shows the healed amount to the caster when over-healing.
+
             if (ShouldSendMessageAsSelfHeal(Caster, target))
             {
                 MessageToCaster($"You heal yourself for {preCriticalAmount:0} hit points.", eChatType.CT_Spell);
@@ -186,7 +189,7 @@ namespace DOL.GS.Spells
             else
             {
                 MessageToCaster($"You heal {target.GetName(0, false)} for {preCriticalAmount:0} hit points!", eChatType.CT_Spell);
-                MessageToLiving(target, $"You are healed by {m_caster.GetName(0, false)} for {effectiveAmount:0} hit points.", eChatType.CT_Spell);
+                MessageToLiving(target, $"You are healed by {m_caster.GetName(0, false)} for {effectiveAmount} hit points.", eChatType.CT_Spell);
 
                 if (effectiveAmount < amount)
                     MessageToCaster($"{target.GetName(0, true)} is fully healed.", eChatType.CT_Spell);

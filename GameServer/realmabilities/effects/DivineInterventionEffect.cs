@@ -201,10 +201,11 @@ namespace DOL.GS.RealmAbilities
 				if(!t_player.IsAlive) continue;
 				t_player.Out.SendSpellEffectAnimation(m_owner, player, 8051, 0, false, 1);
 			}
-			player.Out.SendMessage("You are healed by the pool of healing for " + healamount + "!", eChatType.CT_Spell, eChatLoc.CL_SystemWindow);
-            m_playerOwner.Out.SendMessage("Your pool of healing heals " + player.Name + " for " + healamount + "!", eChatType.CT_Spell, eChatLoc.CL_SystemWindow);
-			player.ChangeHealth(m_owner, eHealthChangeType.Spell, healamount);
-			PoolValue -= dmgamount;
+
+			healamount = player.ChangeHealth(m_owner, eHealthChangeType.Spell, healamount);
+			player.Out.SendMessage($"You are healed by the pool of healing for {healamount}!", eChatType.CT_Spell, eChatLoc.CL_SystemWindow);
+			m_playerOwner.Out.SendMessage($"Your pool of healing heals {player.Name} for {healamount}!", eChatType.CT_Spell, eChatLoc.CL_SystemWindow);
+			PoolValue -= healamount;
 
 			if (PoolValue <= 0)
 				Cancel(false);
