@@ -444,6 +444,8 @@ namespace DOL.GS.PacketHandler
 				playerStatus |= 0x08;
 			if (player?.Client.ClientState == GameClient.eClientState.Linkdead)
 				playerStatus |= 0x10;
+			// These debuffs currently don't trigger a call to WriteGroupMemberUpdate.
+			// See EffectHelper.GetPlayerUpdateFromEffect.
 			if (living.DebuffCategory[eProperty.SpellRange] != 0 || living.DebuffCategory[eProperty.ArcheryRange] != 0)
 				playerStatus |= 0x40;
 			pak.WriteByte(playerStatus);

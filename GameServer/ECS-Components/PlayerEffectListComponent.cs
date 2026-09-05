@@ -98,6 +98,9 @@ namespace DOL.GS
 
             if ((requestedUpdates & EffectHelper.PlayerUpdate.PetWindow) != 0)
                 _owner.ControlledBrain?.UpdatePetWindow();
+
+            if ((requestedUpdates & EffectHelper.PlayerUpdate.GroupWindow) != 0)
+                _owner.Group?.UpdateMember(_owner, false);
         }
     }
 }

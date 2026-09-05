@@ -78,9 +78,9 @@ namespace DOL.GS
                 case eSpellType.ConstitutionBuff:
                     return eEffect.ConstitutionBuff;
                 case eSpellType.StrengthConstitutionBuff:
-                    return eEffect.StrengthConBuff;
+                    return eEffect.StrConBuff;
                 case eSpellType.DexterityQuicknessBuff:
-                    return eEffect.DexQuickBuff;
+                    return eEffect.DexQuiBuff;
                 case eSpellType.AcuityBuff:
                     return eEffect.AcuityBuff;
                 case eSpellType.BaseArmorFactorBuff:
@@ -339,7 +339,7 @@ namespace DOL.GS
                 case eEffect.AcuityDebuff:
                     properties[count++] = eProperty.Acuity;
                     break;
-                case eEffect.StrengthConBuff:
+                case eEffect.StrConBuff:
                 case eEffect.StrConDebuff:
                     properties[count++] = eProperty.Strength;
                     properties[count++] = eProperty.Constitution;
@@ -348,7 +348,7 @@ namespace DOL.GS
                     properties[count++] = eProperty.WeaponSkill;
                     properties[count++] = eProperty.Constitution;
                     break;
-                case eEffect.DexQuickBuff:
+                case eEffect.DexQuiBuff:
                 case eEffect.DexQuiDebuff:
                     properties[count++] = eProperty.Dexterity;
                     properties[count++] = eProperty.Quickness;
@@ -480,14 +480,7 @@ namespace DOL.GS
             {
                 case eEffect.StrengthBuff:
                 case eEffect.StrengthDebuff:
-                case eEffect.Disease:
-                {
-                    playerUpdate |= PlayerUpdate.Stats;
-                    playerUpdate |= PlayerUpdate.Encumbrance;
-                    playerUpdate |= PlayerUpdate.WeaponArmor;
-                    break;
-                }
-                case eEffect.StrengthConBuff:
+                case eEffect.StrConBuff:
                 case eEffect.StrConDebuff:
                 {
                     playerUpdate |= PlayerUpdate.Stats;
@@ -497,30 +490,22 @@ namespace DOL.GS
                 }
                 case eEffect.ConstitutionBuff:
                 case eEffect.ConstitutionDebuff:
-                case eEffect.WsConDebuff:
+                case eEffect.QuicknessBuff:
+                case eEffect.QuicknessDebuff:
+                case eEffect.AcuityBuff:
+                case eEffect.AcuityDebuff:
                 {
                     playerUpdate |= PlayerUpdate.Stats;
                     break;
                 }
                 case eEffect.DexterityBuff:
                 case eEffect.DexterityDebuff:
-                case eEffect.QuicknessBuff:
-                case eEffect.QuicknessDebuff:
-                {
-                    playerUpdate |= PlayerUpdate.Stats;
-                    break;
-                }
-                case eEffect.DexQuickBuff:
+                case eEffect.DexQuiBuff:
                 case eEffect.DexQuiDebuff:
+                case eEffect.WsConDebuff:
                 {
                     playerUpdate |= PlayerUpdate.Stats;
                     playerUpdate |= PlayerUpdate.WeaponArmor;
-                    break;
-                }
-                case eEffect.AcuityBuff:
-                case eEffect.AcuityDebuff:
-                {
-                    playerUpdate |= PlayerUpdate.Stats;
                     break;
                 }
                 case eEffect.BodyResistBuff:
@@ -556,6 +541,24 @@ namespace DOL.GS
                 case eEffect.ArmorFactorDebuff:
                 {
                     playerUpdate |= PlayerUpdate.WeaponArmor;
+                    break;
+                }
+                case eEffect.Mez:
+                {
+                    playerUpdate |= PlayerUpdate.GroupWindow;
+                    break;
+                }
+                case eEffect.Disease:
+                {
+                    playerUpdate |= PlayerUpdate.Stats;
+                    playerUpdate |= PlayerUpdate.Encumbrance;
+                    playerUpdate |= PlayerUpdate.WeaponArmor;
+                    playerUpdate |= PlayerUpdate.GroupWindow;
+                    break;
+                }
+                case eEffect.DamageOverTime:
+                {
+                    playerUpdate |= PlayerUpdate.GroupWindow;
                     break;
                 }
             }
@@ -619,14 +622,15 @@ namespace DOL.GS
         [Flags]
         public enum PlayerUpdate : ushort
         {
-            PetWindow =     1 << 7,
-            Icons =         1 << 6,
-            Stats =         1 << 5,
-            Resists =       1 << 4,
-            WeaponArmor =   1 << 3,
-            Encumbrance =   1 << 2,
-            Concentration = 1,
-            None =          0
+            None =          0,
+            Icons =         1,
+            Stats =         1 << 2,
+            Resists =       1 << 3,
+            WeaponArmor =   1 << 4,
+            Encumbrance =   1 << 5,
+            Concentration = 1 << 6,
+            GroupWindow =   1 << 7,
+            PetWindow =     1 << 8
         }
     }
 }

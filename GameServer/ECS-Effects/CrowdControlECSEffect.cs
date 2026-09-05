@@ -29,14 +29,12 @@ namespace DOL.GS
             if (Owner is GameNPC npc)
                 npc.StopMoving();
 
-            if (Owner.effectListComponent.ContainsEffectForEffectType(eEffect.SpeedOfSound))
-                UpdatePlayerStatus();
+            OwnerPlayer?.Client.Out.SendUpdateMaxSpeed();
         }
 
         protected void OnHardCCStop()
         {
             Owner.DisableTurning(false);
-            UpdatePlayerStatus();
 
             // Re-schedule the next think so that the NPC can resume its attack immediately for example.
             if (Owner is GameNPC npc && npc.Brain is ABrain brain)
@@ -46,16 +44,8 @@ namespace DOL.GS
                 Owner.LastAttackedByEnemyTickPvE = GameLoop.GameLoopTime;
             else
                 Owner.LastAttackedByEnemyTickPvP = GameLoop.GameLoopTime;
-        }
 
-        protected void UpdatePlayerStatus()
-        {
-            if (OwnerPlayer != null)
-            {
-                OwnerPlayer.Client.Out.SendUpdateMaxSpeed();
-                if (OwnerPlayer.Group != null)
-                    OwnerPlayer.Group.UpdateMember(OwnerPlayer, false);
-            }
+            OwnerPlayer?.Client.Out.SendUpdateMaxSpeed();
         }
 
         protected void SendMessages()
@@ -84,7 +74,6 @@ namespace DOL.GS
         {
             Owner.IsStunned = true;
             OnHardCCStart();
-            UpdatePlayerStatus();
 
             // Immediately start the immunity effect for NPCs. This is used for diminishing returns.
             if (AppliedImmunityType is ImmunityType.Npc && !Owner.effectListComponent.ContainsEffectForEffectType(eEffect.NPCStunImmunity))
@@ -99,7 +88,6 @@ namespace DOL.GS
         {
             Owner.IsStunned = Owner.effectListComponent.ContainsEffectForEffectType(eEffect.Stun);
             OnHardCCStop();
-            UpdatePlayerStatus();
 
             // "You recover from the stun.."
             // "{0} recovers from the stun."
@@ -122,7 +110,6 @@ namespace DOL.GS
         {
             Owner.IsMezzed = true;
             OnHardCCStart();
-            UpdatePlayerStatus();
 
             // Immediately start the immunity effect for NPCs. This is used for diminishing returns.
             if (AppliedImmunityType is ImmunityType.Npc && !Owner.effectListComponent.ContainsEffectForEffectType(eEffect.NPCMezImmunity))
@@ -137,7 +124,6 @@ namespace DOL.GS
         {
             Owner.IsMezzed = Owner.effectListComponent.ContainsEffectForEffectType(eEffect.Mez);
             OnHardCCStop();
-            UpdatePlayerStatus();
 
             // "You are no longer entranced."
             // "You recover from the mesmerize."
