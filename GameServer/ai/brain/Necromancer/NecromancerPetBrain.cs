@@ -10,7 +10,6 @@ namespace DOL.AI.Brain
     /// <summary>
     /// A brain for the necromancer pets.
     /// </summary>
-    /// <author>Aredhel</author>
     public class NecromancerPetBrain : ControlledMobBrain
     {
         public NecromancerPetBrain(GameLiving owner) : base(owner) { }
@@ -89,7 +88,7 @@ namespace DOL.AI.Brain
                         break;
 
                     case CastFailedEventArgs.Reasons.NotEnoughPower:
-                        RemoveSpellFromQueue();
+                        TryRemoveSpellFromQueue(out _);
                         MessageToOwner(LanguageMgr.GetTranslation((Owner as GamePlayer).Client.Account.Language,
                             "AI.Brain.Necromancer.NoPower", Body.Name), eChatType.CT_SpellResisted, Owner as GamePlayer);
                         break;
@@ -122,13 +121,7 @@ namespace DOL.AI.Brain
             if (!Body.IsCasting)
                 CheckAttackSpellQueue();
 
-            SpellQueueEntry entry = GetSpellFromQueue();
-
-            if (entry == null || !CastSpell(entry.Spell, entry.SpellLine, entry.Target, true))
-                return false;
-
-            RemoveSpellFromQueue();
-            return true;
+            return TryRemoveSpellFromQueue(out SpellQueueEntry entry) && CastSpell(entry.Spell, entry.SpellLine, entry.Target, true);
         }
 
         /// <summary>
@@ -225,20 +218,6 @@ namespace DOL.AI.Brain
         /// Fetches a spell from the queue without removing it; the spell is removed *after* the spell has finished casting.
         /// </summary>
         /// <returns>The next spell or null, if no spell is in the queue.</returns>
-        private SpellQueueEntry GetSpellFromQueue()
-        {
-            m_spellQueue.TryPeek(out SpellQueueEntry spellQueueEntry);
-
-            if (!m_spellQueue.IsEmpty)
-                DebugMessageToOwner(string.Format("Grabbing spell '{0}' from the start of the queue in order to cast it", spellQueueEntry.Spell.Name));
-
-            return spellQueueEntry;
-        }
-
-        /// <summary>
-        /// Fetches a spell from the queue without removing it; the spell is removed *after* the spell has finished casting.
-        /// </summary>
-        /// <returns>The next spell or null, if no spell is in the queue.</returns>
         private SpellQueueEntry GetSpellFromAttackQueue()
         {
             m_attackSpellQueue.TryPeek(out SpellQueueEntry spellQueueEntry);
@@ -252,12 +231,13 @@ namespace DOL.AI.Brain
         /// <summary>
         /// Removes the spell that is first in the queue.
         /// </summary>
-        public void RemoveSpellFromQueue()
+        private bool TryRemoveSpellFromQueue(out SpellQueueEntry spellQueueEntry)
         {
-            m_spellQueue.TryDequeue(out SpellQueueEntry spellQueueEntry);
+            if (!m_spellQueue.TryDequeue(out spellQueueEntry))
+                return false;
 
-            if (spellQueueEntry != null)
-                DebugMessageToOwner(string.Format("Removing spell '{0}' from the start of the queue", spellQueueEntry.Spell.Name));
+            DebugMessageToOwner(string.Format("Removing spell '{0}' from the start of the queue", spellQueueEntry.Spell.Name));
+            return true;
         }
 
         /// <summary>
