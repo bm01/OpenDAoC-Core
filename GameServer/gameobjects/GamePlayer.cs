@@ -11750,8 +11750,8 @@ namespace DOL.GS
         /// </summary>
         public eCraftingSkill CraftingPrimarySkill
         {
-            get { return m_craftingPrimarySkill; }
-            set { m_craftingPrimarySkill = value; }
+            get => m_craftingPrimarySkill;
+            private set => m_craftingPrimarySkill = value;
         }
 
         /// <summary>
@@ -11919,6 +11919,15 @@ namespace DOL.GS
                 }
             }
             return false;
+        }
+
+        public virtual void ChangeCraftingPrimarySkill(eCraftingSkill craftingSkill)
+        {
+            lock (_craftingLock)
+            {
+                CraftingPrimarySkill = craftingSkill;
+                CraftingProgressMgr.TrackChange(this, m_craftingSkills);
+            }
         }
 
         /// <summary>
