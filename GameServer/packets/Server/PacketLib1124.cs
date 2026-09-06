@@ -934,45 +934,34 @@ namespace DOL.GS.PacketHandler
 			ushort icon2 = 0;
 			string spell_name1 = string.Empty;
 			string spell_name2 = string.Empty;
-			if (item.Object_Type != (int)eObjectType.AlchemyTincture)
+
+			if ((eObjectType) item.Object_Type is not eObjectType.AlchemyTincture)
 			{
-				if (item.SpellID > 0/* && item.Charges > 0*/)
+				if (item.SpellID > 0)
 				{
-					SpellLine chargeEffectsLine = SkillBase.GetSpellLine(GlobalSpellsLines.Item_Effects);
-					if (chargeEffectsLine != null)
+					Spell spell = SkillBase.GetSpellByID(item.SpellID);
+
+					if (spell != null)
 					{
-						List<Spell> spells = SkillBase.GetSpellList(chargeEffectsLine.KeyName);
-						foreach (Spell spl in spells)
-						{
-							if (spl.ID == item.SpellID)
-							{
-								flag |= 0x08;
-								icon1 = spl.Icon;
-								spell_name1 = spl.Name; // or best spl.Name ?
-								break;
-							}
-						}
+						flag |= 0x08;
+						icon1 = spell.Icon;
+						spell_name1 = spell.Name;
 					}
 				}
-				if (item.SpellID1 > 0/* && item.Charges > 0*/)
+
+				if (item.SpellID1 > 0)
 				{
-					SpellLine chargeEffectsLine = SkillBase.GetSpellLine(GlobalSpellsLines.Item_Effects);
-					if (chargeEffectsLine != null)
+					Spell spell = SkillBase.GetSpellByID(item.SpellID1);
+
+					if (spell != null)
 					{
-						List<Spell> spells = SkillBase.GetSpellList(chargeEffectsLine.KeyName);
-						foreach (Spell spl in spells)
-						{
-							if (spl.ID == item.SpellID1)
-							{
-								flag |= 0x10;
-								icon2 = spl.Icon;
-								spell_name2 = spl.Name; // or best spl.Name ?
-								break;
-							}
-						}
+						flag |= 0x10;
+						icon2 = spell.Icon;
+						spell_name2 = spell.Name;
 					}
 				}
 			}
+
 			pak.WriteByte((byte)flag);
 			if ((flag & 0x08) == 0x08)
 			{

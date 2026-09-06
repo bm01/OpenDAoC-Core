@@ -329,31 +329,29 @@ namespace DOL.GS.PacketHandler
 			string spell_name1 = string.Empty;
 			string spell_name2 = string.Empty;
 
-			if (item.Object_Type != (int)eObjectType.AlchemyTincture)
+			if ((eObjectType) item.Object_Type is not eObjectType.AlchemyTincture)
 			{
-				SpellLine chargeEffectsLine = SkillBase.GetSpellLine(GlobalSpellsLines.Item_Effects);
-
-				if (chargeEffectsLine != null)
+				if (item.SpellID > 0)
 				{
-					if (item.SpellID > 0/* && item.Charges > 0*/)
+					Spell spell = SkillBase.GetSpellByID(item.SpellID);
+
+					if (spell != null)
 					{
-						Spell spell = SkillBase.FindSpell(item.SpellID, chargeEffectsLine);
-						if (spell != null)
-						{
-							flag |= 0x08;
-							icon1 = spell.Icon;
-							spell_name1 = spell.Name; // or best spl.Name ?
-						}
+						flag |= 0x08;
+						icon1 = spell.Icon;
+						spell_name1 = spell.Name;
 					}
-					if (item.SpellID1 > 0/* && item.Charges > 0*/)
+				}
+
+				if (item.SpellID1 > 0)
+				{
+					Spell spell = SkillBase.GetSpellByID(item.SpellID1);
+
+					if (spell != null)
 					{
-						Spell spell = SkillBase.FindSpell(item.SpellID1, chargeEffectsLine);
-						if (spell != null)
-						{
-							flag |= 0x10;
-							icon2 = spell.Icon;
-							spell_name2 = spell.Name; // or best spl.Name ?
-						}
+						flag |= 0x10;
+						icon2 = spell.Icon;
+						spell_name2 = spell.Name;
 					}
 				}
 			}
