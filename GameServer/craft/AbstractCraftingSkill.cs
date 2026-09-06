@@ -55,13 +55,6 @@ namespace DOL.GS
 
 		public const int subSkillCap = 1300;
 
-		public virtual string CRAFTER_TITLE_PREFIX
-		{
-			get
-			{
-				return string.Empty;
-			}
-		}
 		public eCraftingSkill eSkill
 		{
 			get

@@ -27,7 +27,7 @@ namespace DOL.GS
             };
         }
 
-        public string GetTitle(GamePlayer player, int skillLevel)
+        public virtual string GetTitle(GamePlayer player, int skillLevel)
         {
             string profession = LanguageMgr.TryTranslateOrDefault(player, "!Profession!", Profession);
             return LanguageMgr.TryTranslateOrDefault(player, "!None {0}!", GetTitleFormat(skillLevel), profession);

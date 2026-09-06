@@ -26,7 +26,7 @@ namespace DOL.GS.PlayerTitles
 		public override string GetValue(GamePlayer source, GamePlayer player)
 		{
 			if (player.CraftingPrimarySkill == eCraftingSkill.NoCrafting || !player.CraftingSkills.TryGetValue(player.CraftingPrimarySkill, out int craftingLevel))
-				return string.Format(LanguageMgr.TryTranslateOrDefault(source, "!BasicCrafting!", "Crafting.Name.BasicCrafting"));
+				return string.Empty;
 
 			AbstractCraftingSkill craftingSkill = CraftingMgr.getSkillbyEnum(player.CraftingPrimarySkill);
 			return craftingSkill is AbstractProfession profession ? profession.GetTitle(source, craftingLevel) : craftingSkill.Name;
