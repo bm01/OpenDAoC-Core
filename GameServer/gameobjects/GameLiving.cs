@@ -343,7 +343,7 @@ namespace DOL.GS
 
 		private double GetStatContributionToArmorAbsorb()
 		{
-			const double DIVISOR = 5.5;
+			const double DIVISOR = 6.0;
 			double conPart = StatCalculator.CalculateBuffContributionToAbsorbOrResist(this, eProperty.Constitution) / DIVISOR;
 			double dexPart = StatCalculator.CalculateBuffContributionToAbsorbOrResist(this, eProperty.Dexterity) / DIVISOR;
 			return 1 - (1 - conPart) * (1 - dexPart);
