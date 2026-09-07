@@ -44,8 +44,20 @@ namespace DOL.GS.PropertyCalc
             // Treat NPC resists from constitution buffs as another layer of resists for now.
             if (living is GameNPC)
             {
-                double resistanceFromConstitution = StatCalculator.CalculateBuffContributionToAbsorbOrResist(living, eProperty.Constitution) / 8 * 100;
-                result += (int) ((1 - result * 0.01) * resistanceFromConstitution);
+                switch (property)
+                {
+                    case eProperty.Resist_Heat:
+                    case eProperty.Resist_Cold:
+                    case eProperty.Resist_Matter:
+                    case eProperty.Resist_Energy:
+                    case eProperty.Resist_Spirit:
+                    case eProperty.Resist_Body:
+                    {
+                        double resistanceFromConstitution = StatCalculator.CalculateBuffContributionToAbsorbOrResist(living, eProperty.Constitution) / 8 * 100;
+                        result += (int) ((1 - result * 0.01) * resistanceFromConstitution);
+                        break;
+                    }
+                }
             }
 
             // http://www.postcount.net/forum/showthread.php?192979-Primary-Secondary-and-Tertiary-resist-graphs-plus-racial-resist-oddities
