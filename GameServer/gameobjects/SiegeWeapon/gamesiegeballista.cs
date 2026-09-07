@@ -79,14 +79,24 @@ namespace DOL.GS
 			if (TargetObject != CurrentRegion.GetObject(targetId))
 				return;
 
+			if (!GameServer.ServerRules.IsAllowedToAttack(Owner, TargetObject as GameLiving, true))
+			{
+				Owner.Out.SendMessage("You cannot attack that!", eChatType.CT_Say, eChatLoc.CL_SystemWindow);
+				return;
+			}
+
 			base.Fire();
 		}
 
 		public override void DoDamage()
 		{
 			base.DoDamage();//anim mut be called after damage
-			GameLiving target = (TargetObject as GameLiving);
-			if (target == null) return;
+
+			if (TargetObject is not GameLiving target)
+				return;
+
+			if (!GameServer.ServerRules.IsAllowedToAttack(Owner, target, true))
+				return;
 
 			int damageAmount = CalcDamageToTarget(target) + Util.Random(50);
 
