@@ -53,10 +53,9 @@ namespace DOL.GS.PropertyCalc
                 int armorFactor = (int) ((1 + living.Level / divisor) * (living.Level * factor));
 
                 // Some source state either base AF or spec AF isn't supposed to work on NPCs.
-                // In any case, having some buffs not doing anything feels pretty bad. Some pets also have a self spec AF buff.
-                armorFactor += living.BaseBuffBonusCategory[property] + living.SpecBuffBonusCategory[property];
+                // We also ignore paladin AF chant (OtherBonus).
+                armorFactor += living.BaseBuffBonusCategory[property];
                 armorFactor -= Math.Abs(living.DebuffCategory[property]);
-                armorFactor += living.OtherBonus[property];
                 return armorFactor;
             }
 
