@@ -229,7 +229,7 @@ namespace DOL.GS
 			player.Out.SendMessage("You take control of " + GetName(0, false) + ".", eChatType.CT_Say, eChatLoc.CL_SystemWindow);
 			StartControlRangeCheck();
 			if ((CurrentState & GameSiegeWeapon.eState.Armed) != GameSiegeWeapon.eState.Armed)
-				Arm();
+				Arm(false);
 
 		}
 		public virtual void ReleaseControl()
@@ -299,18 +299,24 @@ namespace DOL.GS
 			}
 		}
 
-		public void Arm()
+		public int Arm(bool isAutoArm)
 		{
-			if (!CanUse()) return;
+			if (!CanUse())
+				return 0;
+
 			CurrentState &= ~eState.Armed;
 			SiegeWeaponTimer.CurrentAction = SiegeTimer.eAction.Arming;
-			PreAction();
-			if (Owner != null)
-			{//You prepare the cauldron of boiling oil for firing. (15.0s until armed)
-				Owner.Out.SendMessage("You prepare " + GetName(0, false) + " for firing. (" + (GetActionDelay(SiegeTimer.eAction.Arming) / 1000).ToString("N") + "s until armed)", eChatType.CT_System, eChatLoc.CL_SystemWindow);
-			}
+			int delay = GetActionDelay(SiegeTimer.eAction.Arming);
 
+			if (isAutoArm)
+				UpdateClientInterface();
+			else
+				PreAction();
+
+			Owner?.Out.SendMessage($"You prepare {GetName(0, false)} for firing. ({delay / 1000:N}s until armed)", eChatType.CT_System, eChatLoc.CL_SystemWindow);
+			return delay;
 		}
+
 		public void Move()
 		{
 			if (!CanUse()) return;
@@ -348,9 +354,9 @@ namespace DOL.GS
 			}
    
 			//unarmed & unaim siege weapon
-			CurrentState &= ~eState.Armed;
-			TargetObject = null;
-			CurrentState &= ~eState.Aimed;
+			CurrentState = eState.Inactive;
+			SiegeWeaponTimer.Stop();
+			Owner.Out.SendSiegeWeaponInterface(this, 0);
 			WalkTo(Owner.GroundTarget, 100);
 		}
 
@@ -413,7 +419,7 @@ namespace DOL.GS
 			BroadcastFireAnimation(GetActionDelay(SiegeTimer.eAction.Fire));
 			if (Owner != null)
 				Owner.Out.SendMessage("You fire " + GetName(0, false) + "!", eChatType.CT_System, eChatLoc.CL_SystemWindow);
-			Arm();
+			Arm(false);
 		}
 
 		private int MakeDelayedDamage(ECSGameTimer callingTimer)
@@ -567,7 +573,11 @@ namespace DOL.GS
 			}
 
 			SiegeWeaponTimer.Start(GetActionDelay(SiegeWeaponTimer.CurrentAction));
+			UpdateClientInterface();
+		}
 
+		private void UpdateClientInterface()
+		{
 			if (Owner != null)
 			{
 				int actionDelay = GetActionDelay(SiegeWeaponTimer.CurrentAction) / 100;
@@ -772,38 +782,29 @@ namespace DOL.GS
 		{
 			if (SiegeWeapon.Owner == null)
 				return 0;
+
 			switch (CurrentAction)
 			{
 				case eAction.Arming:
-					{
-						SiegeWeapon.Armed();
-						break;
-					}
+					SiegeWeapon.Armed();
+					break;
 				case eAction.Aiming:
-					{
-						SiegeWeapon.Aimed();
-						break;
-					}
+					SiegeWeapon.Aimed();
+					break;
 				case eAction.Loading:
-					{
-						//todo set ammo
-						break;
-					}
+					//todo set ammo
+					break;
 				case eAction.Fire:
-					{
-						SiegeWeapon.DoDamage();
-						break;
-					}
+					SiegeWeapon.DoDamage();
+					break;
 				default: break;
 			}
 
-			if (SiegeWeapon.Owner != null)
-			{
-				SiegeWeapon.Owner.Out.SendSiegeWeaponInterface(this.SiegeWeapon, 0);
-			}
+			SiegeWeapon.Owner?.Out.SendSiegeWeaponInterface(this.SiegeWeapon, 0);
+
 			if ((SiegeWeapon.CurrentState & GameSiegeWeapon.eState.Armed) != GameSiegeWeapon.eState.Armed)
-				SiegeWeapon.Arm();
-			
+				return SiegeWeapon.Arm(true);
+
 			return 0;
 		}
 	}

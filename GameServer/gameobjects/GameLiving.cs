@@ -2853,15 +2853,12 @@ namespace DOL.GS
 				return;
 
 			GroundTarget.Set(x, y, z);
-			OnGroundTargetSet();
 		}
 
 		protected virtual bool CanSetGroundTarget()
 		{
 			return true;
 		}
-
-		protected virtual void OnGroundTargetSet() { }
 
 		/// <summary>
 		/// Gets or Sets the current level of the Object

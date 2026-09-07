@@ -8735,10 +8735,6 @@ namespace DOL.GS
             return true;
         }
 
-        protected override void OnGroundTargetSet()
-        {
-            SiegeWeapon?.SetGroundTarget(GroundTarget.X, GroundTarget.Y, GroundTarget.Z);
-        }
 
         /// <summary>
         /// Updates Health, Mana, Sitting, Endurance, Concentration and Alive status to client

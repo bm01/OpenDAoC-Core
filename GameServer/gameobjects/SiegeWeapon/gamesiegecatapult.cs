@@ -49,9 +49,6 @@ namespace DOL.GS
 		
 		public int AttackRadius;
 
-		private GameNPC tempLOSSkyChecker;
-		private GameNPC tempLOSGTChecker;
-		private int loschecks;
 		public override void Aim()
 		{
 			if (!CanUse()) return;
@@ -64,7 +61,7 @@ namespace DOL.GS
 			Point3D newGroundTarget = null;
 
 			if (Owner.TargetObject != null)
-				newGroundTarget = TargetObject;
+				newGroundTarget = Owner.TargetObject;
 			else if (Owner.GroundTarget.IsValid)
 				newGroundTarget = Owner.GroundTarget;
 
@@ -136,11 +133,7 @@ namespace DOL.GS
 					list.Add(npc);
 				}
 			}
-			
-			if (!list.Contains(this.TargetObject))
-			{
-				list.Add(this.TargetObject);
-			}
+
 			return list;
 		}
 
