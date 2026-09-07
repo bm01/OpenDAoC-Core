@@ -171,59 +171,43 @@ namespace DOL.AI.Brain
                 if (turretSpell == null)
                     return null;
 
+                // Find the closest non-empty distance bucket.
+                // Randomizing which candidate within a bucket gets picked
+                // by starting the scan at a random offset.
                 int randomIndex = Util.Random(candidates.Length - 1);
-                int slotCount = DistanceBucketCount * 2; // Primary block, then fallback block.
-                Span<int> bestIndexByPriority = stackalloc int[slotCount];
-                bestIndexByPriority.Fill(-1);
+                Span<int> bestIndexByBucket = stackalloc int[DistanceBucketCount];
+                bestIndexByBucket.Fill(-1);
 
                 for (int i = 0; i < candidates.Length; i++)
                 {
                     int index = (randomIndex + i) % candidates.Length;
-                    int priority = GetPriority(candidates[index], brain, turretSpell);
-
-                    if (priority == -1)
-                        continue;
-
-                    ref int slot = ref bestIndexByPriority[priority];
+                    int bucket = (int) candidates[index].EffectiveAggro;
+                    ref int slot = ref bestIndexByBucket[bucket];
 
                     if (slot == -1)
                         slot = index;
 
-                    if (priority == 0)
-                        break; // Closest + untouched, the best possible match. No need to look further.
+                    if (bucket == 0)
+                        break; // Closest possible bucket, no need to look further.
                 }
 
-                foreach (int index in bestIndexByPriority)
+                int selectedIndex = -1;
+
+                foreach (int index in bestIndexByBucket)
                 {
                     if (index != -1)
-                        return candidates[index].Living;
+                    {
+                        selectedIndex = index;
+                        break;
+                    }
                 }
 
-                return null;
+                return selectedIndex == -1 ? null : candidates[selectedIndex].Living;
             }
 
             public override bool ShouldBeRemoved(GameLiving target)
             {
                 return base.ShouldBeRemoved(target) || !_owner.Body.IsWithinRadius(target, _owner.AggroRange);
-            }
-
-            private static int GetPriority(AggroTable.TargetCandidate candidate, StandardMobBrain brain, Spell turretSpell)
-            {
-                // Lower value = higher priority.
-                // Primary (untouched) candidates occupy [0, bucketCount), ordered closest-first.
-                // Fallback candidates occupy [bucketCount, 2*bucketCount), ordered closest-first.
-                // Returns -1 if the candidate isn't a valid target at all.
-
-                GameLiving living = candidate.Living;
-                int distanceBucket = (int) candidate.EffectiveAggro;
-                bool untouched = !brain.LivingHasEffect(living, turretSpell) &&
-                    !living.effectListComponent.ContainsEffectForEffectType(eEffect.SnareImmunity);
-
-                if (!untouched && turretSpell.Damage <= 0)
-                    return -1; // No damage, fallback tiers don't apply.
-
-                int fallbackOffset = untouched ? 0 : DistanceBucketCount;
-                return fallbackOffset + distanceBucket;
             }
         }
     }

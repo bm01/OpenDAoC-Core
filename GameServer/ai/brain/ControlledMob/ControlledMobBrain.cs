@@ -687,15 +687,7 @@ namespace DOL.AI.Brain
 
 			public override bool ShouldBeRemoved(GameLiving target)
 			{
-				if (base.ShouldBeRemoved(target))
-					return true;
-
-				// Pets forget about mezzed and rooted players.
-				if (target.IsMezzed)
-					return true;
-
-				ECSGameEffect root = EffectListService.GetEffectOnTarget(target, eEffect.MovementSpeedDebuff);
-				return root != null && root.SpellHandler.Spell.Value == 99;
+				return base.ShouldBeRemoved(target) || target.IsMezzed;
 			}
 		}
 	}
