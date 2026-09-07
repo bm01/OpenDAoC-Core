@@ -42,7 +42,7 @@ namespace DOL.GS.PropertyCalc
             result += (int) ((1 - result * 0.01) * abilityBonus); // Secondary resists.
 
             // Treat NPC resists from constitution buffs as another layer of resists for now.
-            if (living is GameNPC)
+            if (!forCrowdControlDuration && living is GameNPC)
             {
                 switch (property)
                 {
