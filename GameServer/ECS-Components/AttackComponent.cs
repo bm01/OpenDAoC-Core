@@ -1215,7 +1215,7 @@ namespace DOL.GS
                 if (playerOwner.SpecLock > 0)
                     return (playerOwner.SpecLock, playerOwner.SpecLock);
 
-                double specRatio = Math.Min((spec - 1) / ((double) target.Level + 1), 1.0);
+                double specRatio = Math.Clamp((spec - 1) / ((double) target.Level + 1), 0, 1);
                 double minVariance = 0.75 + 0.5 * specRatio;
                 varianceRange = (minVariance, minVariance + 0.5);
             }
